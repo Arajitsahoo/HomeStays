@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const placeController = require('../controllers/placeController');
 const bookingController = require('../controllers/bookingController');
+const OtpController = require('../controllers/otpController')
 const Place = require('../models/Place');
 const imageDownload = require('image-downloader');
 const multer = require('multer')
@@ -12,6 +13,7 @@ const uploadToS3 = require('../utils/uploadToS3');
 router.use('/user',userController);
 router.use('/place',placeController);
 router.use('/booking',bookingController);
+router.use('/otp',OtpController);
 
 const photosMiddleware = multer({dest:'/tmp'});
 

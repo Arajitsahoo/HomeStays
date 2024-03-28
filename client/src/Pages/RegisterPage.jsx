@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Spinner from "../Components/Spinner";
+import Modal from "../Components/Modal/Modal";
 
 const RegisterPage = () => {
   const [name, setName] = useState("");
@@ -11,27 +12,41 @@ const RegisterPage = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [redirect, setRedirect] = useState(null);
+  const [popup, setPopup] = useState(false)
 
   const registerUser = async (e) => {
     e.preventDefault();
+
+
     try {
-      setLoading(true);
-      await axios.post("http://localhost:4000/user/register", { name, email, password });
-      setLoading(false);
-      toast.success("Registration Successfull");
-      setRedirect("/login");
+      const response = await axios.post('http://localhost:4000/otp/sendMail', {email, name})
+      toast.success(response.data.message);
+      const user ={ name, email, password}
+      localStorage.setItem('user', JSON.stringify(user))
+      setPopup(!popup)
     } catch (error) {
-      if ((error.response.data.code = 11000))
-        toast.info("Email Already registered!!Try to Login");
-      else
-        toast.error(
-          "Something Wrong happened at our side!! Try after some time"
-        );
+      toast.error(error.response.data.error)
     }
+
+    // try {
+    //   setLoading(true);
+    //   await axios.post("http://localhost:4000/user/register", { name, email, password });
+    //   setLoading(false);
+    //   toast.success("Registration Successfull");
+    //   setRedirect("/login");
+    // } catch (error) {
+    //   if ((error.response.data.code = 11000))
+    //     toast.info("Email Already registered!!Try to Login");
+    //   else
+    //     toast.error(
+    //       "Something Wrong happened at our side!! Try after some time"
+    //     );
+    // }
   };
   if (redirect) return <Navigate to={redirect} />;
   return (
     <div className="mt-10 pt-6 grow flex-col items-center">
+      {popup && <Modal setPopup={setPopup}/>}
       {loading ? (
         <Spinner />
       ) : (
